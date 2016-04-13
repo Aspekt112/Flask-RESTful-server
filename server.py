@@ -17,7 +17,7 @@ def post_func():
     if 'key' in request.json and 'value' in request.json:
         key = request.json['key']
         value = request.json['value']
-        if data.__contains__(key):
+        if key in data:
             return abort(409)
         node = {key: value}
         data.update(node)
@@ -30,7 +30,7 @@ def put_func():
     if 'key' in request.json and 'value' in request.json:
         key = request.json['key']
         value = request.json['value']
-        if not data.__contains__(key):
+        if not (key in data):
             return abort(404)
         if data[key] == value:
             return abort(409)
@@ -42,11 +42,10 @@ def put_func():
 
 @app.route('/dictionary/<key>', methods=['DELETE'])
 def delete_func(key):
-    if data.__contains__(key):
+    if key in data:
         if data.pop(key):
             time = datetime.strftime(datetime.now(), "%Y.%m.%d %H:%M")
-            response = "{\"%s\": \"null\", \"time\": \"%s\"}" % (key, time)
-            return jsonify(success=True, result=response)
+            return jsonify(success=True, result="{\"%s\": \"null\", \"time\": \"%s\"}" % (key, time))
         else:
             return jsonify(success=True, result='200')
     else:
@@ -54,9 +53,8 @@ def delete_func(key):
 
 @app.route('/dictionary/<key>',methods=['GET'])
 def get_func(key):
-    if data.__contains__(key):
-        response = data[key]
-        return jsonify(success=True, result=response)
+    if key in data:
+        return jsonify(success=True, result=data[key])
     else:
         return abort(404)
 
